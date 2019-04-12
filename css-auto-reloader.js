@@ -3,7 +3,7 @@
  *
  * Made by undqurek@gmail.com
  *
- * License: MIT -> You can do with it whatever u want
+ * License: MIT -> You can do with it whatever you want
  */
 ( function()
 {
@@ -80,28 +80,33 @@
 
     function collectAction( element )
     {
-        var cache = document.createElement( 'link' );
-
-        cache.setAttribute( 'rel', 'stylesheet' );
-        cache.setAttribute( 'type', 'text/css' );
+        var selection = element;
 
         var link = element.getAttribute( 'href' );
 
         var requester = new HeaderRequester( link, function()
         {
-            cache.setAttribute( 'href', link + '?' + Math.random() );
+            var element = document.createElement( 'link' );
 
-            var parent = element.parentNode;
+            element.setAttribute( 'rel', 'stylesheet' );
+            element.setAttribute( 'href', link + '?' + Math.random() );
+
+            element.addEventListener( 'load', function()
+            {
+                var parent = selection.parentNode;
+
+                if( parent )
+                {
+                    parent.removeChild( selection );
+
+                    selection = element;
+                }
+            } );
+
+            var parent = selection.parentNode;
 
             if( parent )
-            {
-                parent.insertBefore( cache, element.nextSibling );
-
-                var tmp = element;
-
-                element = cache;
-                cache = tmp;
-            }
+                parent.insertBefore( element, selection.nextSibling );
         } );
 
         actions.push( requester.request.bind( requester ) );
@@ -133,22 +138,27 @@
 
     function HeaderRequester( link, action )
     {
-        var cache = '';
+        var cache = null;
 
         var xhr = new XMLHttpRequest();
 
-        xhr.onreadystatechange = function()
+        xhr.addEventListener( 'readystatechange', function()
         {
             if( xhr.readyState == 4 && xhr.status == 200 )
             {
                 var time = xhr.getResponseHeader( 'Last-Modified' );
 
-                if( cache == time )
-                    return;
+                if( cache )
+                {
+                    if( cache == time )
+                        return;
 
-                action( cache = time );
+                    action();
+                }
+
+                cache = time;
             }
-        };
+        } );
 
         this.request = function()
         {
