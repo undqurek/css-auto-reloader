@@ -3,7 +3,7 @@
  *
  * Made by undqurek@gmail.com
  *
- * License: MIT -> You can do with it what even u want
+ * License: MIT -> You can do with it whatever u want
  */
 ( function()
 {
