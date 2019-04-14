@@ -9,6 +9,11 @@
 {
     'use strict';
 
+    if( window.__css_auto_reloader_c4dbca1428f9e7af886e636fabcaf845__ )
+        return;
+
+    window.__css_auto_reloader_c4dbca1428f9e7af886e636fabcaf845__ = true;
+
     // configuration
 
     var interval = 500; // scanning of changed files frequency
